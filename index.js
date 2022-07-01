@@ -24,7 +24,7 @@ async function run() {
     try {
       await client.connect();
       const profileInfo = client.db("cloudorigin").collection("profile");
-      const  projectlist=client.db('cloudorigin').collection('projectlist');
+      const  projectlist=client.db('cloudorigin').collection('todotask');
 
 
        //----------------profile info insert --------------------
@@ -116,6 +116,52 @@ async function run() {
   //     const result = await projectlist.insertOne(newItem);
   //     res.send(result);
   //   })
+
+  
+        //----------------insert item--------------------
+
+        
+        app.post('/products', async(req,res)=>{
+          const newItem=req.body;
+          const result = await projectlist.insertOne(newItem);
+          res.send(result);
+        })
+  
+       //   my project Collection API----------
+
+     app.get('/projectcount',  async (req, res) => {
+        
+        const email = req.query.email;
+      
+                const query = {email:email};
+                const cursor =await projectlist.find(query).toArray();
+              //  const items = await cursor.toArray();
+                res.send(cursor);
+          
+      
+  })
+
+  // update user information---------------------
+
+  app.put('/updateuserinfo/:id', async(req, res) =>{
+    const id = req.params.id;
+    const updatedUser = req.body;
+    const filter = {_id: ObjectId(id)};
+    const options = { upsert: true };
+    const updatedDoc = {
+        $set: {
+            email: updatedUser.email,
+            name: updatedUser.name,
+            address: updatedUser.address,
+            phoneno: updatedUser.phoneno,
+            profilelink: updatedUser.profilelink,
+            owner: updatedUser.owner
+        }
+    };
+    const result = await projectlist.updateOne(filter, updatedDoc, options);
+    res.send(result);
+
+})
 
 
     } finally {
