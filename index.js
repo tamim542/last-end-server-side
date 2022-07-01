@@ -25,6 +25,7 @@ async function run() {
       await client.connect();
       const profileInfo = client.db("cloudorigin").collection("profile");
       const  projectlist=client.db('cloudorigin').collection('todotask');
+      const  completed=client.db('cloudorigin').collection('completetask');
 
 
        //----------------profile info insert --------------------
@@ -163,6 +164,33 @@ async function run() {
 
 })
 
+//infor collect----------------------------------
+app.get('/profileinfocollection/:id', async (req, res) => {
+      const id = req.params.id;
+      
+      const query = { _id: ObjectId(id) };
+      const result = await projectlist.findOne(query);
+      res.send(result);
+
+  });
+
+//----------------insert item--------------------
+
+        
+app.post('/complete', async(req,res)=>{
+  const newItem=req.body;
+  const result = await completed.insertOne(newItem);
+  res.send(result);
+})
+
+
+  //api all products    
+  app.get('/taskend', async(req,res)=>{
+    const query={}
+    const abc=completed.find(query)
+    const result= await abc.toArray();
+    res.send(result);
+})
 
     } finally {
       
